@@ -6,29 +6,32 @@ datatype card= card_pair of card_group * card_type;;
 datatype color =red|black
 (* 2 ********* *)
 
-fun card_color((hearts,_))=red
-    |card_color((diamonds,_))=red
+fun card_color(card_pair(hearts,_))=red
+    |card_color(card_pair(diamonds,_))=red
     |card_color(card)=black
-val c=(clubs,num 7)
+val c=card_pair(clubs,queen)
 val colored=card_color(c)
 (* 3 ********* *)
 
 
-fun card_value((_,num i))=i
-    |card_value((_,ace))=11
+fun card_value(card_pair(_,num i))=i
+    |card_value(card_pair(_,ace))=11
     |card_value(card)=10
 
 val valued=card_value(c)
 (* 4 ********* *)
 
-fun remove_card(c1::tcd,c2, acc)= if c1=c2 then acc@tcd else remove_card(tcd,c2,c1::acc)
-    |remove_card([],c1,acc)=acc
+exception IllegalMove 
+fun remove_card(c1::tcd,c2, acc, e)= if c1=c2 then acc@tcd else remove_card(tcd,c2,c1::acc, e)
+    |remove_card([],c1,[], e)= raise e
+    |remove_card([],c1,acc, e)=raise e
 
 
-val cards=([(spades,king),(spades,num 8),(clubs,num 7)])
-val cardss=remove_card(cards,c,[])
+val cards=([card_pair(spades,king),card_pair(spades,num 8),c])
+val cardss=remove_card(cards,c,[],IllegalMove )
 
-(* 5 ********* *)
+
+(* 5 *********)
 fun is_same_color([])=true
     |is_same_color([c1])=true
     |is_same_color(c1::c2::cs)=
@@ -42,4 +45,55 @@ fun sum_cards([])=0
     |sum_cards(c1::tcd)=card_value(c1)+sum_cards(tcd)
 
   val summed=  sum_cards(cards)
+
+(* 7 ********* *)
+
+fun score(goal,cards)=  let val prim_score= 
+                        if sum_cards(cards)>goal then 3*(sum_cards(cards)-goal) 
+                        else goal-(sum_cards(cards))
+                        in  if is_same_color(cards) then prim_score div 2
+                        
+                        else prim_score
+                        end
+val scored=score(3,cards)
+
+(* 8 ********* *)
+ datatype move=discard of card|draw
+(* 9 ********* *)
+fun game(c1::card_list, goal,draw::moves,cards )=
+    if sum_cards( c1::cards)>goal then score(goal,c1::cards) else
+        game(card_list, goal,moves, c1::cards)
+    |game([], goal,draw::moves,cards )=score(goal,cards)
+    |game(card_list, goal,discard c2::moves,cards)=game(card_list,goal,moves,remove_card(cards,c,[],IllegalMove))
+    |game(card_list, goal,[],cards)=score(goal,cards)
+
+
+val gamed =
+  [  (  game([card_pair(clubs,jack),card_pair(spades,num(8))],42, [draw,discard c],[] ) handle IllegalMove=>9999)  = 9999
+     , game([card_pair(clubs,ace),card_pair(spades,ace),card_pair(clubs,ace),card_pair(spades,ace),c],42, [draw,draw,draw,draw,draw],[])=3
+     , game([card_pair(clubs,ace),card_pair(spades,ace),card_pair(clubs,ace),card_pair(spades,ace)],30, [draw,draw,draw,draw,draw],[])=4
+     , game([card_pair(clubs,ace),card_pair(spades,ace),card_pair(clubs,ace),card_pair(spades,ace)],22, [draw,draw,draw,draw,draw],[])=16
+     , game([card_pair(clubs,ace),card_pair(spades,ace),card_pair(clubs,ace),card_pair(spades,ace)],100, [draw,draw,draw,draw,draw],[])=28
+     , game([card_pair(clubs,ace),card_pair(spades,ace),card_pair(clubs,ace),card_pair(spades,ace)],44, [draw,draw,draw,draw,draw],[])=0
+     , game([card_pair(diamonds,ace),card_pair(spades,ace),card_pair(clubs,ace),card_pair(spades,ace)],30, [draw,draw,draw,draw,draw],[])=4
+     , game([card_pair(clubs,ace),card_pair(hearts,ace),card_pair(clubs,ace),card_pair(spades,ace)],22, [draw,draw,draw,draw,draw],[])=33
+     , game([card_pair(clubs,ace),card_pair(spades,ace),card_pair(diamonds,ace),card_pair(spades,ace)],100, [draw,draw,draw,draw,draw],[])=56
+     , game([card_pair(clubs,ace),card_pair(spades,ace),card_pair(clubs,ace),card_pair(hearts,ace)],44, [draw,draw,draw,draw,draw],[])=0
+     , game([card_pair(clubs,ace),card_pair(diamonds,ace),card_pair(clubs,ace),card_pair(hearts,ace)],30 ,[draw,draw],[])=8
+     , game([card_pair(clubs,ace),card_pair(diamonds,ace),card_pair(clubs,ace),card_pair(hearts,ace)], 22,[draw,draw],[])=0
+     , game([card_pair(clubs,ace),card_pair(diamonds,ace),card_pair(clubs,ace),card_pair(hearts,ace)],11, [draw,draw],[])=33
+     , game([card_pair(clubs,queen),card_pair(diamonds,ace),card_pair(clubs,ace),card_pair(hearts,ace)], 11,[draw,discard c,draw,draw],[])=33
+     , game([card_pair(clubs,queen),card_pair(diamonds,ace),card_pair(clubs,ace),card_pair(hearts,ace)],22, [draw,discard c,draw,draw],[])=0
+     , game([card_pair(clubs,queen),card_pair(diamonds,ace),card_pair(clubs,ace),card_pair(hearts,ace)],30, [draw,discard c,draw,draw],[])=8
+     , game([card_pair(clubs,queen),card_pair(diamonds,ace),card_pair(hearts,ace),card_pair(diamonds,ace)],11, [draw,discard c,draw,draw],[])=16
+     , game([card_pair(clubs,queen),card_pair(diamonds,ace),card_pair(hearts,ace),card_pair(diamonds,ace)],22, [draw,discard c,draw,draw],[])=0
+     , game([card_pair(clubs,queen),card_pair(diamonds,ace),card_pair(hearts,ace),card_pair(diamonds,ace)],30, [draw,discard c,draw,draw],[])=4
+     , game([card_pair(clubs,queen),card_pair(diamonds,ace),card_pair(hearts,ace),card_pair(diamonds,ace)], 11,[draw,draw,discard c,draw],[])=30
+     , game([card_pair(clubs,queen),card_pair(diamonds,ace),card_pair(hearts,ace),card_pair(diamonds,ace)],22, [draw,draw,discard c,draw],[])=0
+     , game([card_pair(clubs,queen),card_pair(diamonds,ace),card_pair(hearts,ace),card_pair(diamonds,ace)],30, [draw,draw,discard c,draw],[])=4
+  ]
+    val v=game([card_pair(diamonds,ace),card_pair(spades,ace),card_pair(clubs,ace),card_pair(spades,ace)],30, [draw,draw,draw,draw,draw],[])
+
+
+ 
 
