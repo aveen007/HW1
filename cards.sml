@@ -1,3 +1,4 @@
+(* Aveen Hussein *)
 (* 1******* *)
 
 datatype card_type=king|queen|jack|ace|num of int;;
@@ -60,39 +61,39 @@ val scored=score(3,cards)
 (* 8 ********* *)
  datatype move=discard of card|draw
 (* 9 ********* *)
-fun game(c1::card_list, goal,draw::moves,cards )=
+fun officiate(c1::card_list, goal,draw::moves,cards )=
     if sum_cards( c1::cards)>goal then score(goal,c1::cards) else
-        game(card_list, goal,moves, c1::cards)
-    |game([], goal,draw::moves,cards )=score(goal,cards)
-    |game(card_list, goal,discard c2::moves,cards)=game(card_list,goal,moves,remove_card(cards,c,[],IllegalMove))
-    |game(card_list, goal,[],cards)=score(goal,cards)
+        officiate(card_list, goal,moves, c1::cards)
+    |officiate([], goal,draw::moves,cards )=score(goal,cards)
+    |officiate(card_list, goal,discard c2::moves,cards)=officiate(card_list,goal,moves,remove_card(cards,c,[],IllegalMove))
+    |officiate(card_list, goal,[],cards)=score(goal,cards)
 
 
 val gamed =
-  [  (  game([card_pair(clubs,jack),card_pair(spades,num(8))],42, [draw,discard c],[] ) handle IllegalMove=>9999)  = 9999
-     , game([card_pair(clubs,ace),card_pair(spades,ace),card_pair(clubs,ace),card_pair(spades,ace),c],42, [draw,draw,draw,draw,draw],[])=3
-     , game([card_pair(clubs,ace),card_pair(spades,ace),card_pair(clubs,ace),card_pair(spades,ace)],30, [draw,draw,draw,draw,draw],[])=4
-     , game([card_pair(clubs,ace),card_pair(spades,ace),card_pair(clubs,ace),card_pair(spades,ace)],22, [draw,draw,draw,draw,draw],[])=16
-     , game([card_pair(clubs,ace),card_pair(spades,ace),card_pair(clubs,ace),card_pair(spades,ace)],100, [draw,draw,draw,draw,draw],[])=28
-     , game([card_pair(clubs,ace),card_pair(spades,ace),card_pair(clubs,ace),card_pair(spades,ace)],44, [draw,draw,draw,draw,draw],[])=0
-     , game([card_pair(diamonds,ace),card_pair(spades,ace),card_pair(clubs,ace),card_pair(spades,ace)],30, [draw,draw,draw,draw,draw],[])=4
-     , game([card_pair(clubs,ace),card_pair(hearts,ace),card_pair(clubs,ace),card_pair(spades,ace)],22, [draw,draw,draw,draw,draw],[])=33
-     , game([card_pair(clubs,ace),card_pair(spades,ace),card_pair(diamonds,ace),card_pair(spades,ace)],100, [draw,draw,draw,draw,draw],[])=56
-     , game([card_pair(clubs,ace),card_pair(spades,ace),card_pair(clubs,ace),card_pair(hearts,ace)],44, [draw,draw,draw,draw,draw],[])=0
-     , game([card_pair(clubs,ace),card_pair(diamonds,ace),card_pair(clubs,ace),card_pair(hearts,ace)],30 ,[draw,draw],[])=8
-     , game([card_pair(clubs,ace),card_pair(diamonds,ace),card_pair(clubs,ace),card_pair(hearts,ace)], 22,[draw,draw],[])=0
-     , game([card_pair(clubs,ace),card_pair(diamonds,ace),card_pair(clubs,ace),card_pair(hearts,ace)],11, [draw,draw],[])=33
-     , game([card_pair(clubs,queen),card_pair(diamonds,ace),card_pair(clubs,ace),card_pair(hearts,ace)], 11,[draw,discard c,draw,draw],[])=33
-     , game([card_pair(clubs,queen),card_pair(diamonds,ace),card_pair(clubs,ace),card_pair(hearts,ace)],22, [draw,discard c,draw,draw],[])=0
-     , game([card_pair(clubs,queen),card_pair(diamonds,ace),card_pair(clubs,ace),card_pair(hearts,ace)],30, [draw,discard c,draw,draw],[])=8
-     , game([card_pair(clubs,queen),card_pair(diamonds,ace),card_pair(hearts,ace),card_pair(diamonds,ace)],11, [draw,discard c,draw,draw],[])=16
-     , game([card_pair(clubs,queen),card_pair(diamonds,ace),card_pair(hearts,ace),card_pair(diamonds,ace)],22, [draw,discard c,draw,draw],[])=0
-     , game([card_pair(clubs,queen),card_pair(diamonds,ace),card_pair(hearts,ace),card_pair(diamonds,ace)],30, [draw,discard c,draw,draw],[])=4
-     , game([card_pair(clubs,queen),card_pair(diamonds,ace),card_pair(hearts,ace),card_pair(diamonds,ace)], 11,[draw,draw,discard c,draw],[])=30
-     , game([card_pair(clubs,queen),card_pair(diamonds,ace),card_pair(hearts,ace),card_pair(diamonds,ace)],22, [draw,draw,discard c,draw],[])=0
-     , game([card_pair(clubs,queen),card_pair(diamonds,ace),card_pair(hearts,ace),card_pair(diamonds,ace)],30, [draw,draw,discard c,draw],[])=4
+  [  (  officiate([card_pair(clubs,jack),card_pair(spades,num(8))],42, [draw,discard c],[] ) handle IllegalMove=>9999)  = 9999
+     , officiate([card_pair(clubs,ace),card_pair(spades,ace),card_pair(clubs,ace),card_pair(spades,ace),c],42, [draw,draw,draw,draw,draw],[])=3
+     , officiate([card_pair(clubs,ace),card_pair(spades,ace),card_pair(clubs,ace),card_pair(spades,ace)],30, [draw,draw,draw,draw,draw],[])=4
+     , officiate([card_pair(clubs,ace),card_pair(spades,ace),card_pair(clubs,ace),card_pair(spades,ace)],22, [draw,draw,draw,draw,draw],[])=16
+     , officiate([card_pair(clubs,ace),card_pair(spades,ace),card_pair(clubs,ace),card_pair(spades,ace)],100, [draw,draw,draw,draw,draw],[])=28
+     , officiate([card_pair(clubs,ace),card_pair(spades,ace),card_pair(clubs,ace),card_pair(spades,ace)],44, [draw,draw,draw,draw,draw],[])=0
+     , officiate([card_pair(diamonds,ace),card_pair(spades,ace),card_pair(clubs,ace),card_pair(spades,ace)],30, [draw,draw,draw,draw,draw],[])=4
+     , officiate([card_pair(clubs,ace),card_pair(hearts,ace),card_pair(clubs,ace),card_pair(spades,ace)],22, [draw,draw,draw,draw,draw],[])=33
+     , officiate([card_pair(clubs,ace),card_pair(spades,ace),card_pair(diamonds,ace),card_pair(spades,ace)],100, [draw,draw,draw,draw,draw],[])=56
+     , officiate([card_pair(clubs,ace),card_pair(spades,ace),card_pair(clubs,ace),card_pair(hearts,ace)],44, [draw,draw,draw,draw,draw],[])=0
+     , officiate([card_pair(clubs,ace),card_pair(diamonds,ace),card_pair(clubs,ace),card_pair(hearts,ace)],30 ,[draw,draw],[])=8
+     , officiate([card_pair(clubs,ace),card_pair(diamonds,ace),card_pair(clubs,ace),card_pair(hearts,ace)], 22,[draw,draw],[])=0
+     , officiate([card_pair(clubs,ace),card_pair(diamonds,ace),card_pair(clubs,ace),card_pair(hearts,ace)],11, [draw,draw],[])=33
+     , officiate([card_pair(clubs,queen),card_pair(diamonds,ace),card_pair(clubs,ace),card_pair(hearts,ace)], 11,[draw,discard c,draw,draw],[])=33
+     , officiate([card_pair(clubs,queen),card_pair(diamonds,ace),card_pair(clubs,ace),card_pair(hearts,ace)],22, [draw,discard c,draw,draw],[])=0
+     , officiate([card_pair(clubs,queen),card_pair(diamonds,ace),card_pair(clubs,ace),card_pair(hearts,ace)],30, [draw,discard c,draw,draw],[])=8
+     , officiate([card_pair(clubs,queen),card_pair(diamonds,ace),card_pair(hearts,ace),card_pair(diamonds,ace)],11, [draw,discard c,draw,draw],[])=16
+     , officiate([card_pair(clubs,queen),card_pair(diamonds,ace),card_pair(hearts,ace),card_pair(diamonds,ace)],22, [draw,discard c,draw,draw],[])=0
+     , officiate([card_pair(clubs,queen),card_pair(diamonds,ace),card_pair(hearts,ace),card_pair(diamonds,ace)],30, [draw,discard c,draw,draw],[])=4
+     , officiate([card_pair(clubs,queen),card_pair(diamonds,ace),card_pair(hearts,ace),card_pair(diamonds,ace)], 11,[draw,draw,discard c,draw],[])=30
+     , officiate([card_pair(clubs,queen),card_pair(diamonds,ace),card_pair(hearts,ace),card_pair(diamonds,ace)],22, [draw,draw,discard c,draw],[])=0
+     , officiate([card_pair(clubs,queen),card_pair(diamonds,ace),card_pair(hearts,ace),card_pair(diamonds,ace)],30, [draw,draw,discard c,draw],[])=4
   ]
-    val v=game([card_pair(diamonds,ace),card_pair(spades,ace),card_pair(clubs,ace),card_pair(spades,ace)],30, [draw,draw,draw,draw,draw],[])
+    val v=officiate([card_pair(diamonds,ace),card_pair(spades,ace),card_pair(clubs,ace),card_pair(spades,ace)],30, [draw,draw,draw,draw,draw],[])
 
 
  
