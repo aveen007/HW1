@@ -33,12 +33,12 @@ val cardss=remove_card(cards,c,[],IllegalMove )
 
 
 (* 5 *********)
-fun is_same_color([])=true
-    |is_same_color([c1])=true
-    |is_same_color(c1::c2::cs)=
-     if card_color(c1)=card_color(c2) then  true andalso is_same_color(cs)
+fun is_all_same_color([])=true
+    |is_all_same_color([c1])=true
+    |is_all_same_color(c1::c2::cs)=
+     if card_color(c1)=card_color(c2) then  true andalso is_all_same_color(cs)
      else   false
-val is_colored=is_same_color(cards)
+val is_colored=is_all_same_color(cards)
 
 
 (* 6 ********* *)
@@ -52,7 +52,7 @@ fun sum_cards([])=0
 fun score(goal,cards)=  let val prim_score= 
                         if sum_cards(cards)>goal then 3*(sum_cards(cards)-goal) 
                         else goal-(sum_cards(cards))
-                        in  if is_same_color(cards) then prim_score div 2
+                        in  if is_all_same_color(cards) then prim_score div 2
                         
                         else prim_score
                         end
